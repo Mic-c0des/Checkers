@@ -117,4 +117,30 @@ public class Board {
             }
         }
     }
+
+    /**
+     * try to capture the piece and move diagonal two spaces
+     * catch IndexOutOfBounds error and instead do a sideways V (this is when you are capturing on the edges of the board)
+     *if the piece CAN capture then it should move two spaces, the captured piece should disappear and that players piece count should decrease by 1
+     */
+    public void capture(int captor, int captive){
+        int captorR = getRow(captor);
+        int captorC = getColumn(captor);
+
+        int captiveR = getRow(captive);
+        int captiveC = getColumn(captive);
+
+        try{
+            /**
+             * if we are going down and to the right captive-captor=9
+             * if we are going down and to the left then captive-captor=7
+             */
+        }catch(IndexOutOfBoundsException e){
+            //diagonal V
+        }
+    }
+
+    public boolean gameOver(){
+        return p1Pieces == 0 || p2Pieces == 0;
+    }
 }
