@@ -1,6 +1,37 @@
+/**
+ *
+ */
 public abstract class Piece {
+    /**
+     * String that represents what team the piece is on.
+     * In this case it will be 1 or 2
+     */
+    private int team;
+    /**
+     * char that represents the piece on the printed board
+     */
+    private char visual;
+
+    public Piece(int team, char visual){
+        this.team = team;
+        this.visual = visual;
+    }
 
     public Piece(){
+
+    }
+
+    public int getTeam(){
+        return team;
+    }
+
+    public char getVisual(){
+        return visual;
+    }
+
+
+
+    public void copy(Piece other){
 
     }
 }
