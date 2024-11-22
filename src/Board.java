@@ -28,7 +28,7 @@ public class Board {
 
     /**
      * @param location
-     * @returns the column of the checker board at which the piece
+     * @returns the column of the checkerboard at which the piece
      * the method is being called on is located
      */
     public int getColumn(int location){
@@ -37,7 +37,7 @@ public class Board {
 
     /**
      * @param location
-     * @returns the row of the checker board at which the piece
+     * @returns the row of the checkerboard at which the piece
      * the method is being called on is located
      */
     public int getRow(int location){
