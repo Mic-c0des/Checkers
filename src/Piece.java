@@ -55,25 +55,35 @@ public abstract class Piece {
     }
 
     /**
-     * @return the row of the piece
+     * @return the row of this piece
      */
     public int getX() {
         return x;
     }
 
     /**
-     * @param x is the new x for this piece
+     * @param x is the new row for this piece
      */
     public void setX(int x){
 
     }
 
+    /**
+     * @return the column of this piece
+     */
     public int getY() {
         return y;
     }
 
     /**
-     * @param other
+     * @param y is the new column for this piece
+     */
+    public void setY(int y){
+
+    }
+
+    /**
+     * @param other is the piece to be deep copied
      */
     public void copy(Piece other){
 

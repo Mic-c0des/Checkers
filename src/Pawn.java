@@ -8,4 +8,8 @@ public class Pawn extends Piece{
     public Pawn(int t,int x,int y, char c){
         super(t,x,y,c);
     }
+
+    /**
+     * implement and override necessary methods form the class piece to work specifically for a pawn
+     */
 }
