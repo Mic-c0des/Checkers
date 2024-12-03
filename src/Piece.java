@@ -9,36 +9,38 @@ public abstract class Piece {
      * X will record the X position of the game piece for the board
      * Y will record the Y position of the game piece for the board
      */
-    private int team, x, y ;
+    private final int team;
+    private int row, col;
     /**
      * char that represents the piece on the printed board
      */
     private char visual;
 
-    public Piece(int team,int x,int y, char visual){
+    /**
+     * @param team 1 will indicate the team at the top of the board, 2 will indicate the team at the bottom
+     * @param row
+     * @param col
+     * @param visual
+     */
+    public Piece(int team,int row,int col, char visual){
         this.team = team;
+        this.row = row;
+        this.col = col;
         this.visual = visual;
-        this.x = x;
-        this.y = y;
     }
-
 
     /**
      * Attempts to move a players piece from position x to y
      * @throws IndexOutOfBoundsException of location is invalid or already occupied
      */
-    public void play(int x, int y){
-        //TODO: make it work
-    }
+    public abstract void play(Piece p, int x, int y) throws IndexOutOfBoundsException;
 
     /**
      * try to capture the piece and move diagonal two spaces
      * catch IndexOutOfBounds error and instead do a sideways V (this is when you are capturing on the edges of the board)
      *if the piece CAN capture then it should move two spaces, the captured piece should disappear and that players piece count should decrease by 1
      */
-    public void capture(int captor, int captive){
-        //TODO: make it work
-    }
+    public abstract void capture(Piece captor, Piece captive, int nRow, int nCol) throws IndexOutOfBoundsException;
 
     /**
      * @returns what team this piece is on
@@ -57,35 +59,35 @@ public abstract class Piece {
     /**
      * @return the row of this piece
      */
-    public int getX() {
-        return x;
+    public int getRow() {
+        return row;
     }
 
     /**
-     * @param x is the new row for this piece
+     * @param row is the new row for this piece
      */
-    public void setX(int x){
-
+    public void setRow(int row){
+        this.row = row;
     }
 
     /**
      * @return the column of this piece
      */
-    public int getY() {
-        return y;
+    public int getCol() {
+        return col;
     }
 
     /**
-     * @param y is the new column for this piece
+     * @param col is the new column for this piece
      */
-    public void setY(int y){
-
+    public void setCol(int col){
+        this.col = col;
     }
 
     /**
-     * @param other is the piece to be deep copied
+     * Piece is to be deep copied
+     * requires deep copy because piece
+     * is a mutable object
      */
-    public void copy(Piece other){
-
-    }
+    public abstract Piece selfCopy();
 }
