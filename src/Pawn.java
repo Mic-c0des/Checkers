@@ -15,6 +15,7 @@ public class Pawn extends Piece{
      * @param nCol
      * @throws IndexOutOfBoundsException of location is invalid or already occupied
      */
+
     @Override
     public void play(Piece p, int nRow, int nCol) throws IndexOutOfBoundsException {
         int tempR = p.getRow();
@@ -24,11 +25,15 @@ public class Pawn extends Piece{
 
         if(p.getTeam() == 1 && (tempR + 1) == nRow || ((tempC + 1) == nCol || (tempC - 1) == nCol)) {
             p.setRow(nRow);
+            this.setRow(nRow);
             p.setCol(nCol);
+            this.setCol(nCol);
         }
         else if(p.getTeam() == 2 && (tempR - 1) == nRow || ((tempC + 1) == nCol || (tempC - 1) == nCol)) {
             p.setRow(nRow);
+            this.setRow(nRow);
             p.setCol(nCol);
+            this.setCol(nCol);
         }
         else{
             throw new IndexOutOfBoundsException();

@@ -10,10 +10,11 @@ public class Board {
      * Creates an empty arraylist that is a square with side lengths of SIZE
      */
     private Piece[][] curBoard = new Piece[SIZE][SIZE];
+    private ArrayList<Pawn> curARBoard = new ArrayList<>();
 
     /**
      * p1Pieces keeps track of how many pieces player/team 1 has on the board
-     * p2Pieces keeps track of how many pieces player/team 1 has on the board
+     * p2Pieces keeps track of how many pieces player/team 2 has on the board
      */
     private int p1Pieces = 12;
     private int p2Pieces = 12;
@@ -36,12 +37,14 @@ public class Board {
                 for(int c = 0; c < SIZE; c+=2){
                     Pawn p = new Pawn(1, r, c, 'X');
                     curBoard[r][c] = p;
+                    curARBoard.add(p);
                 }
             }
             else{
                 for(int c = 1; c < SIZE; c+=2){
                     Pawn p = new Pawn(1, r, c, 'X');
                     curBoard[r][c] = p;
+                    curARBoard.add(p);
                 }
             }
         }
@@ -54,14 +57,16 @@ public class Board {
                 //make a new piece with team 1 row r, col c, and visual X
                 //Set curb[r][c] = this.piece.getVisual()
                 for(int c = 0; c < SIZE; c+=2){
-                    Pawn p = new Pawn(1, r, c, 'X');
+                    Pawn p = new Pawn(2, r, c, 'O');
                     curBoard[r][c] = p;
+                    curARBoard.add(p);
                 }
             }
             else{
                 for(int c = 1; c < SIZE; c+=2){
-                    Pawn p = new Pawn(1, r, c, 'X');
+                    Pawn p = new Pawn(2, r, c, 'O');
                     curBoard[r][c] = p;
+                    curARBoard.add(p);
                 }
             }
         }
@@ -131,6 +136,31 @@ public class Board {
      */
     public Piece getPiece(int row, int col){
         return curBoard[row][col];
+    }
+
+    public Pawn getCurARBoardAtSpot(int row , int col) {
+
+        Pawn thinglookingfor = null;
+
+        for (int i = 0 ; i < curARBoard.size() ; i++) {
+            if (row == curARBoard.get(i).getRow() && col == curARBoard.get(i).getCol()) {
+                thinglookingfor = curARBoard.get(i);
+            }
+
+        }
+
+        return thinglookingfor;
+    }
+
+    public void Clearspot(int row, int col){
+        curBoard[row][col] = null;
+    }
+
+    public void moveSetPiece(Piece p, int oldRow, int oldCol){
+        curBoard[oldRow][oldCol] = null;
+        curBoard[p.getRow()][p.getCol()] = p;
+        //curBoard[oldRow][oldCol] = null;
+        //Allows visual board to update the pieces position
     }
 
     public void setPiece(Piece p, int oldRow, int oldCol, int newRow, int newCol){

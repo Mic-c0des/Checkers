@@ -56,6 +56,10 @@ public abstract class Piece {
         return visual;
     }
 
+    public void setVisual(char visual) {
+        this.visual = visual;
+    }
+
     /**
      * @return the row of this piece
      */
@@ -89,5 +93,9 @@ public abstract class Piece {
      * requires deep copy because piece
      * is a mutable object
      */
+
+    public void printer(){
+        System.out.println("Team: "+team +", Visual: "+visual+", Row: "+row+", Colum: "+col);
+    }
     public abstract Piece selfCopy();
 }

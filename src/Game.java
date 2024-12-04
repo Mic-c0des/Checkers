@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Game {
@@ -41,14 +42,45 @@ public class Game {
         int curR = in.nextInt();
         println("Enter desired pieces current col");
         int curC = in.nextInt();
+
+        if (curB.isOccupied(curR, curC)) {
+            System.out.println("true");
+            Piece thisthing = curB.getPiece(curR,curC);
+            thisthing.printer();
+            curB.getPiece(curR,curC).setVisual('@');
+            curB.printBoard();
+            System.out.println("");
+            //curB.getPiece(curR,curC)
+            curB.getPiece(curR,curC).setVisual('X');
+            thisthing.play(curB.getPiece(curR,curC),curR+1,curC+1);
+
+            curB.moveSetPiece(thisthing,curR,curC);
+            //curB.Clearspot(curR,curC);
+
+            //curB.getPiece(curR,curC).setVisual('X');
+
+            curB.printBoard();
+
+            /*
+            ArrayList<Piece> thinghere = curB.getCurARBoardAtSpot(curR, curC);
+            if (thinghere.getFirst() instanceof Pawn) {
+                Pawn currentthing = (Pawn) thinghere.getFirst();
+                currentthing.play(thisthing,3,1);
+            }
+             //*/
+        }
+
         println("Enter desired move row");
         int moveR = in.nextInt();
         println("Enter desired move col");
         int moveC = in.nextInt();
 
+
         if(curB.isOccupied(curR, curC) && !curB.isOccupied(moveR, moveC)){
             curB.getPiece(curR, curC).play(curB.getPiece(curR, curC),moveR, moveC);
         }
+
+
 
         curB.printBoard();
     }
