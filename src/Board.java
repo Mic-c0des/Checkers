@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Stack;
 
 public class Board {
     /**
@@ -15,10 +16,18 @@ public class Board {
      * p1Pieces keeps track of how many pieces player/team 1 has on the board
      * p2Pieces keeps track of how many pieces player/team 1 has on the board
      */
-    private int p1Pieces = 12;
-    private int p2Pieces = 12;
+    private Stack<Character> p1Pieces;
+    private Stack<Character> p2Pieces;
 
     public Board(){
+        p1Pieces = new Stack<>();
+        for(int i = 0; i < (SIZE/2)*3; i++){
+            p1Pieces.push('x');
+        }
+        p2Pieces = new Stack<>();
+        for(int i = 0; i < (SIZE/2)*3; i++){
+            p1Pieces.push('o');
+        }
     }
 
 
@@ -34,13 +43,13 @@ public class Board {
                 //make a new piece with team 1 row r, col c, and visual X
                 //Set curb[r][c] = this.piece.getVisual()
                 for(int c = 0; c < SIZE; c+=2){
-                    Pawn p = new Pawn(1, r, c, 'X');
+                    Pawn p = new Pawn(1, 'x');
                     curBoard[r][c] = p;
                 }
             }
             else{
                 for(int c = 1; c < SIZE; c+=2){
-                    Pawn p = new Pawn(1, r, c, 'X');
+                    Pawn p = new Pawn(1, 'x');
                     curBoard[r][c] = p;
                 }
             }
@@ -54,13 +63,13 @@ public class Board {
                 //make a new piece with team 1 row r, col c, and visual X
                 //Set curb[r][c] = this.piece.getVisual()
                 for(int c = 0; c < SIZE; c+=2){
-                    Pawn p = new Pawn(1, r, c, 'X');
+                    Pawn p = new Pawn(1, 'o');
                     curBoard[r][c] = p;
                 }
             }
             else{
                 for(int c = 1; c < SIZE; c+=2){
-                    Pawn p = new Pawn(1, r, c, 'X');
+                    Pawn p = new Pawn(1, 'o');
                     curBoard[r][c] = p;
                 }
             }
@@ -133,10 +142,6 @@ public class Board {
         return curBoard[row][col];
     }
 
-    public void setPiece(Piece p, int oldRow, int oldCol, int newRow, int newCol){
-        //Allows visual board to update the pieces position
-    }
-
     /**
      * @param r row to be checked
      * @param c column to be checked
@@ -150,6 +155,6 @@ public class Board {
      * @return True and will end gameLoop if one of the teams is out of pieces
      */
     public boolean gameOver(){
-        return p1Pieces == 0 || p2Pieces == 0;
+        return p1Pieces.isEmpty() || p2Pieces.isEmpty();
     }
 }

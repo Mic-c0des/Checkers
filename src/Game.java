@@ -1,6 +1,7 @@
-import java.util.Scanner;
+import java.util.*;
 
 public class Game {
+    Queue<Integer> whoTurn;
 
     /**
      * @param args runs main code to create and allow the
@@ -17,7 +18,9 @@ public class Game {
      * Constructs a Game object
      */
     public Game(){
-
+        whoTurn = new LinkedList<>();
+        whoTurn.add(1);
+        whoTurn.add(2);
     }
 
     /**
@@ -27,38 +30,45 @@ public class Game {
     public void gameLoop(){
         Board curB = new Board();
         Scanner in = new Scanner(System.in);
-        System.out.println("Filling board");
+        println("Filling board");
         curB.fillBoard();
         curB.printBoard();
+        boolean gameGo = false;
 
-        //print where would you like to play
-        //check if that spots occupied
-        //run play method
-        //Need to find a way to get the piece at said location that way play can be called on it
+        println(whoTurn);
 
-        println("Welcome to checkers please format input for moving pieces as current row\ncurrent column\ndesired row\ndesired column");
-        println("Enter desired pieces current row");
-        int curR = in.nextInt();
-        println("Enter desired pieces current col");
-        int curC = in.nextInt();
-        println("Enter desired move row");
-        int moveR = in.nextInt();
-        println("Enter desired move col");
-        int moveC = in.nextInt();
+        /**
+         * while gameGO is true
+         * Player 1 will be the top of the board player 2 will be the bottom(or go by visual X can only go down O can only go up)
+         * ask for the row and col of the piece the player wants to move or if they want to forfeit
+         * TRY
+         *
+         * peak the whoTurn queue to see who is allowed to play
+         *
+         * when a play is completed remove that index of the queue and add that same number to the end
+         *Essentially the Queue will rotate [1,2] [2,1] until the game is over
+         *
+         * if row is 0,1,2 we are moving row + 1
+         * if row is 5,6,7 we are moving row - 1
+         *
+         * for both
+         *
+         * if column-1<0 Must move right
+         * else if column+1>7 Must move left
+         * else ask for left or right
+         * if left then go left if right then go right
+         * if something other that L/left or R/right OR the spot the player is trying to move to is occupied ask the user to try again
+         *
+         */
 
-        if(curB.isOccupied(curR, curC) && !curB.isOccupied(moveR, moveC)){
-            curB.getPiece(curR, curC).play(curB.getPiece(curR, curC),moveR, moveC);
-        }
-
-        curB.printBoard();
     }
 
 
-    public void println(String s){
+    public void println(Object s){
         System.out.println(s);
     }
 
-    public void print(String s){
+    public void print(Object s){
         System.out.print(s);
     }
 }
