@@ -22,6 +22,11 @@ public abstract class Piece {
         this.visual = visual;
     }
 
+    public Piece(Piece p){
+        this.team = p.getTeam();
+        this.visual = p.getVisual();
+    }
+
     /**
      * @returns what team this piece is on
      */

@@ -37,6 +37,7 @@ public class Game {
         println("Filling board");
         curB.fillBoard();
         boardHistory.push(curB.newCopy());
+        curB.newCopy().printBoard();
         boardHistory.peek().printBoard();
         boolean gameGo = true;
 
@@ -48,6 +49,7 @@ public class Game {
 
         //Game play/state loop
         while(gameGo){
+            boardHistory.push(curB.newCopy());
             int tempR;
             int tempC;
 
@@ -64,6 +66,7 @@ public class Game {
             try{
                 if(whoTurn.peek() == 1 && curB.getPiece(r,c).getVisual() == 'x'){
                     curB.getPiece(r,c).setVisual('@');
+                    boardHistory.peek().printBoard();
                     curB.printBoard();
                 }
                 else if(whoTurn.peek() == 2 && curB.getPiece(r,c).getVisual() == 'o'){

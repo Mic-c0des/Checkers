@@ -40,10 +40,19 @@ public class Board {
         for(Character p2: other.p2Pieces){
             this.p2Pieces.push(p2);
         }
+
+
+        //Has a pointer problem somewhere the copy is not deep enough to the setVisual('@') also changes the copy that is in the stack
+
         this.curBoard = new Piece[other.curBoard.length][other.curBoard[0].length];
         for(int i=0; i<other.curBoard.length; i++){
             for(int j=0; j<other.curBoard[i].length; j++){
-                this.curBoard[i][j] = other.curBoard[i][j];
+                if(isOccupied(i,j)){
+                    this.curBoard[i][j] = other.curBoard[i][j].selfCopy();
+                }
+                else{
+                    this.curBoard[i][j] = null;
+                }
             }
         }
     }

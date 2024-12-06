@@ -7,11 +7,15 @@ public class Pawn extends Piece{
         super(team,visual);
     }
 
+    public Pawn(Pawn other){
+        super(other);
+    }
+
     /**
      * implement and override necessary methods form the class piece to work specifically for a pawn
      */
     @Override
     public Pawn selfCopy(){
-        return new Pawn(this.getTeam(), this.getVisual());
+        return new Pawn(this);
     }
 }
