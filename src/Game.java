@@ -36,9 +36,6 @@ public class Game {
         Scanner in = new Scanner(System.in);
         println("Filling board");
         curB.fillBoard();
-        boardHistory.push(curB.newCopy());
-        curB.newCopy().printBoard();
-        boardHistory.peek().printBoard();
         boolean gameGo = true;
 
         //Intro and player name assignments
@@ -49,27 +46,38 @@ public class Game {
 
         //Game play/state loop
         while(gameGo){
-            boardHistory.push(curB.newCopy());
-            int tempR;
-            int tempC;
-
-            if(whoTurn.peek()%2 == 0){
-                println(p2Name + " what row");
-            }
-            else {
-                println(p1Name + " what row");
-            }
-            int r = in.nextInt()-1;
-            println("what col");
-            int c = in.nextInt()-1;
-
             try{
+                boardHistory.push(curB.newCopy());
+                boardHistory.peek().printBoard();
+                int tempR;
+                int tempC;
+
+                if(whoTurn.peek()%2 == 0){
+                    println(p2Name + " what row");
+                }
+                else {
+                    println(p1Name + " what row");
+                }
+                int r = in.nextInt()-1;
+                if( r>7 || r<0){
+                    throw new InputMismatchException();
+                }
+                println("what col");
+                int c = in.nextInt()-1;
+                if(c>7 || r<0){
+                    throw new InputMismatchException();
+                }
                 if(whoTurn.peek() == 1 && curB.getPiece(r,c).getVisual() == 'x'){
+                    if(curB.isOccupied(r+1,c+1) || curB.isOccupied(r+1, c-1)){
+                        throw new IllegalArgumentException();
+                    }
                     curB.getPiece(r,c).setVisual('@');
-                    boardHistory.peek().printBoard();
                     curB.printBoard();
                 }
                 else if(whoTurn.peek() == 2 && curB.getPiece(r,c).getVisual() == 'o'){
+                    if(curB.isOccupied(r-1,c+1) || curB.isOccupied(r-1, c-1)){
+                        throw new IllegalArgumentException();
+                    }
                     curB.getPiece(r,c).setVisual('@');
                     curB.printBoard();
                 }
@@ -170,11 +178,13 @@ public class Game {
                 else{
                     throw new InputMismatchException();
                 }
+
             } catch (InputMismatchException e){
                 println("Illegal input detected try again");
-            }
-            catch (NullPointerException e){
+            } catch (NullPointerException e){
                 println("Empty space try again");
+            } catch (IllegalArgumentException e){
+                println("This piece has no valid places to move to");
             }
         }
 
@@ -209,9 +219,5 @@ public class Game {
 
     public void println(Object s){
         System.out.println(s);
-    }
-
-    public void print(Object s){
-        System.out.print(s);
     }
 }

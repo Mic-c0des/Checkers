@@ -32,22 +32,21 @@ public class Board {
     }
 
     public Board(Board other){
-        this.p1Pieces = new Stack<>();
-        this.p2Pieces = new Stack<>();
-        for(Character p1: other.p1Pieces){
-            this.p1Pieces.push(p1);
-        }
-        for(Character p2: other.p2Pieces){
-            this.p2Pieces.push(p2);
-        }
-
+//        this.p1Pieces = new Stack<>();
+//        this.p2Pieces = new Stack<>();
+//        for(Character p1: other.p1Pieces){
+//            this.p1Pieces.push(p1);
+//        }
+//        for(Character p2: other.p2Pieces){
+//            this.p2Pieces.push(p2);
+//        }
 
         //Has a pointer problem somewhere the copy is not deep enough to the setVisual('@') also changes the copy that is in the stack
 
         this.curBoard = new Piece[other.curBoard.length][other.curBoard[0].length];
         for(int i=0; i<other.curBoard.length; i++){
             for(int j=0; j<other.curBoard[i].length; j++){
-                if(isOccupied(i,j)){
+                if(other.isOccupied(i,j)){
                     this.curBoard[i][j] = other.curBoard[i][j].selfCopy();
                 }
                 else{
