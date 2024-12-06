@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.Stack;
 
 public class Board {
@@ -29,7 +30,6 @@ public class Board {
             p1Pieces.push('o');
         }
     }
-
 
     /**
      * Fills the board with pieces objects
@@ -140,6 +140,21 @@ public class Board {
      */
     public Piece getPiece(int row, int col){
         return curBoard[row][col];
+    }
+
+    public void play(int oldR, int oldC, int newR, int newC, Piece p){
+        if(!isOccupied(newR, newC)){
+            curBoard[oldR][oldC] = null;
+            curBoard[newR][newC] = p;
+        }
+    }
+
+    public void capture(int oldR, int oldC, int newR, int newC, Piece captor, Piece captive) throws InputMismatchException {
+        if (captor.getVisual() != captive.getVisual()) {
+
+        } else {
+            throw new InputMismatchException();
+        }
     }
 
     /**
