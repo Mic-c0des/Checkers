@@ -31,6 +31,23 @@ public class Board {
         }
     }
 
+    public Board(Board other){
+        this.p1Pieces = new Stack<>();
+        this.p2Pieces = new Stack<>();
+        for(Character p1: other.p1Pieces){
+            this.p1Pieces.push(p1);
+        }
+        for(Character p2: other.p2Pieces){
+            this.p2Pieces.push(p2);
+        }
+        this.curBoard = new Piece[other.curBoard.length][other.curBoard[0].length];
+        for(int i=0; i<other.curBoard.length; i++){
+            for(int j=0; j<other.curBoard[i].length; j++){
+                this.curBoard[i][j] = other.curBoard[i][j];
+            }
+        }
+    }
+
     /**
      * Fills the board with pieces objects
      */
@@ -164,6 +181,10 @@ public class Board {
      */
     public boolean isOccupied(int r, int c){
         return curBoard[r][c] != null;
+    }
+
+    public Board newCopy(){
+        return new Board(this);
     }
 
     /**

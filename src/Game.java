@@ -36,7 +36,7 @@ public class Game {
         Scanner in = new Scanner(System.in);
         println("Filling board");
         curB.fillBoard();
-        boardHistory.push(curB);
+        boardHistory.push(curB.newCopy());
         boardHistory.peek().printBoard();
         boolean gameGo = true;
 
@@ -154,12 +154,12 @@ public class Game {
                 else if (yn.toLowerCase().equals("yes")){
                     if(whoTurn.peek() == 1){
                         curB.getPiece(tempR, tempC).setVisual('x');
-                        boardHistory.push(curB);
+                        boardHistory.push(curB.newCopy());
                         boardHistory.peek().printBoard();
                     }
                     else{
                         curB.getPiece(tempR, tempC).setVisual('o');
-                        boardHistory.push(curB);
+                        boardHistory.push(curB.newCopy());
                         boardHistory.peek().printBoard();
                     }
                     whoTurn.add(whoTurn.remove());
