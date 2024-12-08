@@ -32,16 +32,14 @@ public class Board {
     }
 
     public Board(Board other){
-//        this.p1Pieces = new Stack<>();
-//        this.p2Pieces = new Stack<>();
-//        for(Character p1: other.p1Pieces){
-//            this.p1Pieces.push(p1);
-//        }
-//        for(Character p2: other.p2Pieces){
-//            this.p2Pieces.push(p2);
-//        }
-
-        //Has a pointer problem somewhere the copy is not deep enough to the setVisual('@') also changes the copy that is in the stack
+        this.p1Pieces = new Stack<>();
+        this.p2Pieces = new Stack<>();
+        for(Character p1: other.p1Pieces){
+            this.p1Pieces.push(p1);
+        }
+        for(Character p2: other.p2Pieces){
+            this.p2Pieces.push(p2);
+        }
 
         this.curBoard = new Piece[other.curBoard.length][other.curBoard[0].length];
         for(int i=0; i<other.curBoard.length; i++){
@@ -61,21 +59,23 @@ public class Board {
      */
     public void fillBoard(){
         //Team 1
-        //row 0,2 X_X_X_X_
-        //Row 1   _X_X_X_X
+        //row 0,2 _X_X_X_X
+        //Row 1   X_X_X_X_
         for(int r = 0; r < (SIZE/2)-1; r++){
             if(r%2 == 0){
                 //make a new piece with team 1 row r, col c, and visual X
                 //Set curb[r][c] = this.piece.getVisual()
-                for(int c = 0; c < SIZE; c+=2){
-                    Pawn p = new Pawn(1, 'x');
-                    curBoard[r][c] = p;
-                }
-            }
-            else{
                 for(int c = 1; c < SIZE; c+=2){
                     Pawn p = new Pawn(1, 'x');
                     curBoard[r][c] = p;
+                    p1Pieces.push('x');
+                }
+            }
+            else{
+                for(int c = 0; c < SIZE; c+=2){
+                    Pawn p = new Pawn(1, 'x');
+                    curBoard[r][c] = p;
+                    p1Pieces.push('x');
                 }
             }
         }
@@ -90,12 +90,14 @@ public class Board {
                 for(int c = 0; c < SIZE; c+=2){
                     Pawn p = new Pawn(1, 'o');
                     curBoard[r][c] = p;
+                    p2Pieces.push('o');
                 }
             }
             else{
                 for(int c = 1; c < SIZE; c+=2){
                     Pawn p = new Pawn(1, 'o');
                     curBoard[r][c] = p;
+                    p2Pieces.push('o');
                 }
             }
         }
@@ -104,6 +106,7 @@ public class Board {
      * Prints out SIZE by SIZE board where the top 3 and bottom 3 rows are filled with the players pieces
      */
     public void printBoard(){
+        System.out.println();
         for(int i=0; i<SIZE; i++){
             for(int j=0; j <SIZE; j++){
                 if( j != SIZE-1 && isOccupied(i,j)) {
@@ -131,6 +134,7 @@ public class Board {
                 System.out.println();
             }
         }
+        System.out.println();
     }
 
     /**
@@ -174,8 +178,38 @@ public class Board {
         }
     }
 
-    public void capture(int oldR, int oldC, int newR, int newC, Piece captor, Piece captive) throws InputMismatchException {
+    public boolean canCap(){
+        //TODO make this so it checks all spots on the board and if a capture is available
+        return true;
+    }
+
+    public void capture(Piece captor, int capR, int capC, Piece captive, int captiveR, int captiveC) throws InputMismatchException {
+
         if (captor.getVisual() != captive.getVisual()) {
+            if(captor.getVisual() == 'x'){
+                if(captiveC > capC){
+                    play(capR, capC, capR + 2, captiveC + 1, captor);
+                    p2Pieces.pop();
+                    curBoard[captiveR][captiveC] = null;
+                }
+                else{
+                    play(capR, capC, capR + 2, captiveC - 1, captor);
+                    p2Pieces.pop();
+                    curBoard[captiveR][captiveC] = null;
+                }
+            }
+            else if(captor.getVisual() == 'o'){
+                if(captiveC > capC){
+                    play(capR, capC, capR - 2, capC +2, captor);
+                    p1Pieces.pop();
+                    curBoard[captiveR][captiveC] = null;
+                }
+                else{
+                    play(capR, capC, capR - 2, captiveC - 1, captor);
+                    p1Pieces.pop();
+                    curBoard[captiveR][captiveC] = null;
+                }
+            }
 
         } else {
             throw new InputMismatchException();
@@ -188,6 +222,9 @@ public class Board {
      * @return true if the space is filled by a piece object
      */
     public boolean isOccupied(int r, int c){
+        if(c == 8 || c == -1){
+            return false;
+        }
         return curBoard[r][c] != null;
     }
 
@@ -200,5 +237,15 @@ public class Board {
      */
     public boolean gameOver(){
         return p1Pieces.isEmpty() || p2Pieces.isEmpty();
+    }
+
+    /**
+     * @returns true if player 2 wins and false is player 1 won
+     */
+    public boolean getWinner(){
+        if(p1Pieces.isEmpty()){
+            return true;
+        }
+        return false;
     }
 }

@@ -46,6 +46,7 @@ public class Game {
 
         //Game play/state loop
         while(gameGo){
+            String CapOrMov = "move";
             try{
                 boardHistory.push(curB.newCopy());
                 boardHistory.peek().printBoard();
@@ -53,140 +54,192 @@ public class Game {
                 int tempC;
 
                 if(whoTurn.peek()%2 == 0){
-                    println(p2Name + " what row");
+                    println(p2Name + "'s turn");
                 }
                 else {
-                    println(p1Name + " what row");
+                    println(p1Name + "'s turn");
                 }
-                int r = in.nextInt()-1;
-                if( r>7 || r<0){
-                    throw new InputMismatchException();
-                }
-                println("what col");
-                int c = in.nextInt()-1;
-                if(c>7 || r<0){
-                    throw new InputMismatchException();
-                }
-                if(whoTurn.peek() == 1 && curB.getPiece(r,c).getVisual() == 'x'){
-                    if(curB.isOccupied(r+1,c+1) || curB.isOccupied(r+1, c-1)){
-                        throw new IllegalArgumentException();
-                    }
-                    curB.getPiece(r,c).setVisual('@');
-                    curB.printBoard();
-                }
-                else if(whoTurn.peek() == 2 && curB.getPiece(r,c).getVisual() == 'o'){
-                    if(curB.isOccupied(r-1,c+1) || curB.isOccupied(r-1, c-1)){
-                        throw new IllegalArgumentException();
-                    }
-                    curB.getPiece(r,c).setVisual('@');
-                    curB.printBoard();
-                }
-                else{
-                    throw new InputMismatchException();
-                }
-                in.nextLine(); //Gets a fresh line to allow for left/right input
 
-                if(c-1<=0){
-                    //goes right because that's the only option
-                    if(whoTurn.peek() == 1){
-                        curB.play(r,c,r+1,c+1, curB.getPiece(r,c));
-                        tempR = r+1;
-                        tempC = c+1;
-                        whoTurn.add(whoTurn.remove());
-                    }
-                    else{
-                        curB.play(r,c,r-1,c+1, curB.getPiece(r,c));
-                        tempR = r-1;
-                        tempC = c+1;
-                        whoTurn.add(whoTurn.remove());
+                if(curB.canCap()){
+                    println("please type capture if you would like to capture otherwise type anything else");
+                    String input = in.nextLine();
+                    if(input.toLowerCase().equals("capture")){
+                        CapOrMov = "capture";
                     }
                 }
-                else if(c+1>=7){
-                    //goes left because that's the only option
-                    if(whoTurn.peek() == 1){
-                        curB.play(r,c,r+1,c-1, curB.getPiece(r,c));
-                        tempR = r+1;
-                        tempC = c-1;
-                        whoTurn.add(whoTurn.remove());
-                    }
-                    else{
-                        curB.play(r,c,r-1,c-1, curB.getPiece(r,c));
-                        tempR = r-1;
-                        tempC = c-1;
-                        whoTurn.add(whoTurn.remove());
-                    }
 
-                }
-                else{
-                    println("Left or Right");
-                    String lor = in.nextLine();
-                    if(whoTurn.peek() == 1){
-                        if(lor.toLowerCase().equals("left")){
-                            //go left
-                            curB.play(r,c,r+1,c-1, curB.getPiece(r,c));
-                            tempR = r+1;
-                            tempC = c-1;
+                if(CapOrMov.equals("move")){
+                    println("What row");
+                    int r = in.nextInt()-1;
+                    if( r>7 || r<0){
+                        throw new InputMismatchException();
+                    }
+                    println("What column");
+                    int c = in.nextInt()-1;
+                    if(c>7 || c<0){
+                        throw new InputMismatchException();
+                    }
+                    if(whoTurn.peek() == 1 && curB.getPiece(r,c).getVisual() == 'x'){
+                        if(curB.isOccupied(r+1,c+1) && curB.isOccupied(r+1, c-1)){
+                            throw new IllegalArgumentException();
                         }
-                        else if(lor.toLowerCase().equals("right")){
-                            //go right
+                        curB.getPiece(r,c).setVisual('@');
+                        curB.printBoard();
+                    }
+                    else if(whoTurn.peek() == 2 && curB.getPiece(r,c).getVisual() == 'o'){
+                        if(curB.isOccupied(r-1,c+1) && curB.isOccupied(r-1, c-1)){
+                            throw new IllegalArgumentException();
+                        }
+                        curB.getPiece(r,c).setVisual('@');
+                        curB.printBoard();
+                    }
+                    else{
+                        throw new InputMismatchException();
+                    }
+                    in.nextLine(); //Gets a fresh line to allow for left/right input
+
+                    if(c-1<=0 || (whoTurn.peek() == 1 && curB.isOccupied(r+1, c-1)) || (whoTurn.peek() == 2 && curB.isOccupied(r-1,c-1))){
+                        //goes right because that's the only option
+                        if(whoTurn.peek() == 1){
                             curB.play(r,c,r+1,c+1, curB.getPiece(r,c));
                             tempR = r+1;
                             tempC = c+1;
                         }
-                        else {
-                            throw new InputMismatchException();
-                        }
-                    }
-                    else{
-                        if(lor.toLowerCase().equals("left")){
-                            //go left
-                            curB.play(r,c,r-1,c-1, curB.getPiece(r,c));
-                            tempR = r-1;
-                            tempC = c-1;
-                        }
-                        else if(lor.toLowerCase().equals("right")){
-                            //go right
+                        else{
                             curB.play(r,c,r-1,c+1, curB.getPiece(r,c));
                             tempR = r-1;
                             tempC = c+1;
                         }
-                        else {
-                            throw new InputMismatchException();
-                        }
                     }
-                }
-                curB.printBoard();
-                println("Type yes to confirm no to cancel");
-                String yn = in.nextLine();
-                if(yn.toLowerCase().equals("no")){
-                    curB = boardHistory.peek();
-                    curB.printBoard();
-                }
-                else if (yn.toLowerCase().equals("yes")){
-                    if(whoTurn.peek() == 1){
-                        curB.getPiece(tempR, tempC).setVisual('x');
-                        boardHistory.push(curB.newCopy());
-                        boardHistory.peek().printBoard();
+                    else if(c+1>=8 || (whoTurn.peek() == 1 && curB.isOccupied(r+1, c+1)) || (whoTurn.peek() == 2 && curB.isOccupied(r-1,c+1))){
+                        //goes left because that's the only option
+                        if(whoTurn.peek() == 1){
+                            curB.play(r,c,r+1,c-1, curB.getPiece(r,c));
+                            tempR = r+1;
+                            tempC = c-1;
+                        }
+                        else{
+                            curB.play(r,c,r-1,c-1, curB.getPiece(r,c));
+                            tempR = r-1;
+                            tempC = c-1;
+                        }
+
                     }
                     else{
-                        curB.getPiece(tempR, tempC).setVisual('o');
-                        boardHistory.push(curB.newCopy());
-                        boardHistory.peek().printBoard();
+                        println("Left or Right");
+                        String lor = in.nextLine();
+                        if(whoTurn.peek() == 1){
+                            if(lor.toLowerCase().equals("left")){
+                                //go left
+                                curB.play(r,c,r+1,c-1, curB.getPiece(r,c));
+                                tempR = r+1;
+                                tempC = c-1;
+                            }
+                            else if(lor.toLowerCase().equals("right")){
+                                //go right
+                                curB.play(r,c,r+1,c+1, curB.getPiece(r,c));
+                                tempR = r+1;
+                                tempC = c+1;
+                            }
+                            else {
+                                throw new InputMismatchException();
+                            }
+                        }
+                        else{
+                            if(lor.toLowerCase().equals("left")){
+                                //go left
+                                curB.play(r,c,r-1,c-1, curB.getPiece(r,c));
+                                tempR = r-1;
+                                tempC = c-1;
+                            }
+                            else if(lor.toLowerCase().equals("right")){
+                                //go right
+                                curB.play(r,c,r-1,c+1, curB.getPiece(r,c));
+                                tempR = r-1;
+                                tempC = c+1;
+                            }
+                            else {
+                                throw new InputMismatchException();
+                            }
+                        }
                     }
-                    whoTurn.add(whoTurn.remove());
+                    curB.printBoard();
+                    println("Type yes to confirm no to cancel");
+                    String yn = in.nextLine();
+                    if(yn.toLowerCase().equals("no")){
+                        curB = boardHistory.peek();
+                        curB.printBoard();
+                    }
+                    else if (yn.toLowerCase().equals("yes")){
+                        if(whoTurn.peek() == 1){
+                            curB.getPiece(tempR, tempC).setVisual('x');
+                            boardHistory.push(curB.newCopy());
+                            boardHistory.peek().printBoard();
+                        }
+                        else{
+                            curB.getPiece(tempR, tempC).setVisual('o');
+                            boardHistory.push(curB.newCopy());
+                            boardHistory.peek().printBoard();
+                        }
+                        whoTurn.add(whoTurn.remove());
+                    }
+                    else{
+                        throw new InputMismatchException();
+                    }
                 }
                 else{
-                    throw new InputMismatchException();
+                    int captorRow;
+                    int captorCol;
+                    int captiveRow;
+                    int captiveCol;
+
+                    println("what row is your captor");
+                    captorRow = in.nextInt() - 1;
+                    if( captorRow>7 || captorRow<0){
+                        throw new InputMismatchException();
+                    }
+                    println("what column");
+                    captorCol = in.nextInt() - 1;
+                    if( captorCol>7 || captorCol<0){
+                        throw new InputMismatchException();
+                    }
+                    println("(find a way to remove me BUT what row is the captive");
+                    captiveRow = in.nextInt() - 1;
+                    if( captiveRow>7 || captiveRow<0){
+                        throw new InputMismatchException();
+                    }
+                    println("and what column");
+                    captiveCol = in.nextInt() - 1;
+                    if( captiveCol>7 || captiveCol<0){
+                        throw new InputMismatchException();
+                    }
+                    in.nextLine();
+                    curB.capture(curB.getPiece(captorRow, captorCol), captorRow, captorCol, curB.getPiece(captiveRow, captiveCol), captiveRow, captiveCol);
+                    whoTurn.add(whoTurn.remove());
                 }
 
             } catch (InputMismatchException e){
                 println("Illegal input detected try again");
+                  in.nextLine();
             } catch (NullPointerException e){
                 println("Empty space try again");
+                in.nextLine();
             } catch (IllegalArgumentException e){
                 println("This piece has no valid places to move to");
             }
+            if(curB.gameOver()){
+                gameGo = false;
+            }
+
         }
+        String player;
+        if(curB.getWinner()){
+            player = p2Name;
+        }
+        else{
+            player = p1Name;
+        }
+        println("Congratulations " + player + " you win!");
 
         /**
          * while gameGO is true
@@ -216,6 +269,7 @@ public class Game {
          */
 
     }
+
 
     public void println(Object s){
         System.out.println(s);
