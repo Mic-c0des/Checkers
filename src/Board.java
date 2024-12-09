@@ -1,6 +1,9 @@
+/**
+ * @author PAYNEMD24@gcc.edu
+ * @author SATCHELLMR23@gcc.edu
+ */
 import java.util.ArrayList;
 import java.util.InputMismatchException;
-import java.util.Stack;
 
 public class Board {
     /**
@@ -17,38 +20,33 @@ public class Board {
      * p1Pieces keeps track of how many pieces player/team 1 has on the board
      * p2Pieces keeps track of how many pieces player/team 1 has on the board
      */
-    private Stack<Character> p1Pieces;
-    private Stack<Character> p2Pieces;
+    private ArrayList<Piece> p1Pieces;
+    private ArrayList<Piece> p2Pieces;
 
     public Board(){
-        p1Pieces = new Stack<>();
-        for(int i = 0; i < (SIZE/2)*3; i++){
-            p1Pieces.push('x');
-        }
-        p2Pieces = new Stack<>();
-        for(int i = 0; i < (SIZE/2)*3; i++){
-            p1Pieces.push('o');
-        }
+        p1Pieces = new ArrayList<>();
+        p2Pieces = new ArrayList<>();
+
     }
 
     public Board(Board other){
-        this.p1Pieces = new Stack<>();
-        this.p2Pieces = new Stack<>();
-        for(Character p1: other.p1Pieces){
-            this.p1Pieces.push(p1);
+        this.p1Pieces = new ArrayList<>();
+        this.p2Pieces = new ArrayList<>();
+        for(Piece p1: other.p1Pieces){
+            this.p1Pieces.add(p1.selfCopy());
         }
-        for(Character p2: other.p2Pieces){
-            this.p2Pieces.push(p2);
+        for(Piece p2: other.p2Pieces){
+            this.p2Pieces.add(p2.selfCopy());
         }
 
-        this.curBoard = new Piece[other.curBoard.length][other.curBoard[0].length];
-        for(int i=0; i<other.curBoard.length; i++){
-            for(int j=0; j<other.curBoard[i].length; j++){
-                if(other.isOccupied(i,j)){
-                    this.curBoard[i][j] = other.curBoard[i][j].selfCopy();
+        this.curBoard = new Piece[SIZE][SIZE];
+        for(int r=0; r<SIZE; r++){
+            for(int c=0; c<SIZE; c++){
+                if(other.isOccupied(r,c)){
+                    this.curBoard[r][c] = other.curBoard[r][c].selfCopy();
                 }
                 else{
-                    this.curBoard[i][j] = null;
+                    this.curBoard[r][c] = null;
                 }
             }
         }
@@ -66,16 +64,16 @@ public class Board {
                 //make a new piece with team 1 row r, col c, and visual X
                 //Set curb[r][c] = this.piece.getVisual()
                 for(int c = 1; c < SIZE; c+=2){
-                    Pawn p = new Pawn(1, 'x');
+                    Pawn p = new Pawn(1,r, c, 'x');
                     curBoard[r][c] = p;
-                    p1Pieces.push('x');
+                    p1Pieces.add(p);
                 }
             }
             else{
                 for(int c = 0; c < SIZE; c+=2){
-                    Pawn p = new Pawn(1, 'x');
+                    Pawn p = new Pawn(1,r, c, 'x');
                     curBoard[r][c] = p;
-                    p1Pieces.push('x');
+                    p1Pieces.add(p);
                 }
             }
         }
@@ -85,19 +83,19 @@ public class Board {
         //Row 6   _X_X_X_X
         for(int r = 5; r < SIZE; r++){
             if(r%2 == 1){
-                //make a new piece with team 1 row r, col c, and visual X
+                //make a new piece with team 2 row r, col c, and visual X
                 //Set curb[r][c] = this.piece.getVisual()
                 for(int c = 0; c < SIZE; c+=2){
-                    Pawn p = new Pawn(1, 'o');
+                    Pawn p = new Pawn(2,r, c, 'o');
                     curBoard[r][c] = p;
-                    p2Pieces.push('o');
+                    p2Pieces.add(p);
                 }
             }
             else{
                 for(int c = 1; c < SIZE; c+=2){
-                    Pawn p = new Pawn(1, 'o');
+                    Pawn p = new Pawn(2,r, c, 'o');
                     curBoard[r][c] = p;
-                    p2Pieces.push('o');
+                    p2Pieces.add(p);
                 }
             }
         }
@@ -138,76 +136,93 @@ public class Board {
     }
 
     /**
-     * @param location
-     * @return the column of the checkerboard at which the piece
-     * the method is being called on is located
-     */
-    public int getColumn(int location){
-        return location % 8;
-    }
-
-    /**
-     * @param location
-     * @return the row of the checkerboard at which the piece
-     * the method is being called on is located
-     */
-    public int getRow(int location){
-        return location / 8;
-    }
-
-    /**
-     * @param location to be converted to row and column
-     * @return true if the space at row, col is occupied
-     * otherwise returns false(as the space is empty)
-     */
-    public boolean isOccupied(int location){
-        return curBoard[getRow(location)][getColumn(location)] == null;
-    }
-
-    /**
      * @return piece at row, col
      */
     public Piece getPiece(int row, int col){
         return curBoard[row][col];
     }
 
-    public void play(int oldR, int oldC, int newR, int newC, Piece p){
-        if(!isOccupied(newR, newC)){
+    public void play(Piece p, int newRow, int newCol){
+        Piece oldP = p.selfCopy();
+        int oldR = oldP.getRow();
+        int oldC = oldP.getCol();
+        if(!isOccupied(newRow, newCol)){
             curBoard[oldR][oldC] = null;
-            curBoard[newR][newC] = p;
+            curBoard[newRow][newCol] = p.selfCopy();
+        } else {
+            throw new InputMismatchException();
         }
     }
 
     public boolean canCap(){
-        //TODO make this so it checks all spots on the board and if a capture is available
-        return true;
+        for(int r=0; r<SIZE; r++){
+            for(int c=0; c<SIZE; c++){
+                try{
+                    if(isOccupied(r,c)){
+                        char capV = curBoard[r][c].getVisual();
+
+                        boolean topLeft = isOccupied(r-1,c-1);
+                        boolean behindTL = !isOccupied(r-2,c-2);
+                        boolean topRight = isOccupied(r-1,c+1);
+                        boolean behindTR = !isOccupied(r-2,c+2);
+                        boolean bottomLeft = isOccupied(r+1,c-1);
+                        boolean behindBL = !isOccupied(r+2,c-2);
+                        boolean bottomRight = isOccupied(r+1,c+1);
+                        boolean behindBR = !isOccupied(r+2,c+2);
+
+                        if(curBoard[r][c] instanceof King){
+                            if((behindTL && topLeft && capV != curBoard[r-1][c-1].getVisual())||(behindTR && topRight && capV != curBoard[r-1][c+1].getVisual())||(behindBL && bottomLeft && capV != curBoard[r+1][c-1].getVisual())||(behindBR && bottomRight && capV != curBoard[r+1][c+1].getVisual())){
+                                return true;
+                            }
+                        }
+                        else if(curBoard[r][c].getTeam() == 1){
+                            if((behindBL && bottomLeft && capV != curBoard[r+1][c-1].getVisual())||(behindBR && bottomRight && capV != curBoard[r+1][c+1].getVisual())){
+                                return true;
+                            }
+                        }
+                        else if(curBoard[r][c].getTeam() == 2){
+                            if((behindTL && topLeft && capV != curBoard[r-1][c-1].getVisual())||(behindTR && topRight && capV != curBoard[r-1][c+1].getVisual())){
+                                return true;
+                            }
+                        }
+                    }
+                } catch (ArrayIndexOutOfBoundsException e){
+                    continue;
+                }
+            }
+        }
+        return false;
     }
 
-    public void capture(Piece captor, int capR, int capC, Piece captive, int captiveR, int captiveC) throws InputMismatchException {
+    public void capture(Piece captor, Piece captive){
 
-        if (captor.getVisual() != captive.getVisual()) {
+        int capC = captor.getCol();
+        int captiveR = captive.getRow();
+        int captiveC = captive.getCol();
+
+        if (captor.getTeam() != captive.getTeam()) {
             if(captor.getVisual() == 'x'){
                 if(captiveC > capC){
-                    play(capR, capC, capR + 2, captiveC + 1, captor);
-                    p2Pieces.pop();
+                    p2Pieces.remove(captive);
                     curBoard[captiveR][captiveC] = null;
+                    play(captor, captiveR + 1, captiveC + 1);
                 }
                 else{
-                    play(capR, capC, capR + 2, captiveC - 1, captor);
-                    p2Pieces.pop();
+                    p2Pieces.remove(captive);
                     curBoard[captiveR][captiveC] = null;
+                    play(captor, captiveR + 1, captiveC - 1);
                 }
             }
             else if(captor.getVisual() == 'o'){
                 if(captiveC > capC){
-                    play(capR, capC, capR - 2, capC +2, captor);
-                    p1Pieces.pop();
+                    p1Pieces.remove(captive);
                     curBoard[captiveR][captiveC] = null;
+                    play(captor, captiveR + 1, captiveC + 1);
                 }
                 else{
-                    play(capR, capC, capR - 2, captiveC - 1, captor);
-                    p1Pieces.pop();
+                    p1Pieces.remove(captive);
                     curBoard[captiveR][captiveC] = null;
+                    play(captor, captiveR + 1, captiveC - 1);
                 }
             }
 
