@@ -159,8 +159,8 @@ public class Board {
             for(int c=0; c<SIZE; c++){
                 try{
                     if(isOccupied(r,c)){
-                        char capV = curBoard[r][c].getVisual();
 
+                        int capT = curBoard[r][c].getTeam();
                         boolean topLeft = isOccupied(r-1,c-1);
                         boolean behindTL = !isOccupied(r-2,c-2);
                         boolean topRight = isOccupied(r-1,c+1);
@@ -171,17 +171,17 @@ public class Board {
                         boolean behindBR = !isOccupied(r+2,c+2);
 
                         if(curBoard[r][c] instanceof King){
-                            if((behindTL && topLeft && capV != curBoard[r-1][c-1].getVisual())||(behindTR && topRight && capV != curBoard[r-1][c+1].getVisual())||(behindBL && bottomLeft && capV != curBoard[r+1][c-1].getVisual())||(behindBR && bottomRight && capV != curBoard[r+1][c+1].getVisual())){
+                            if((behindTL && topLeft && capT != curBoard[r-1][c-1].getTeam())||(behindTR && topRight && capT != curBoard[r-1][c+1].getTeam())||(behindBL && bottomLeft && capT != curBoard[r+1][c-1].getTeam())||(behindBR && bottomRight && capT != curBoard[r+1][c+1].getTeam())){
                                 return true;
                             }
                         }
                         else if(curBoard[r][c].getTeam() == 1){
-                            if((behindBL && bottomLeft && capV != curBoard[r+1][c-1].getVisual())||(behindBR && bottomRight && capV != curBoard[r+1][c+1].getVisual())){
+                            if((behindBL && bottomLeft && capT != curBoard[r+1][c-1].getTeam())||(behindBR && bottomRight && capT != curBoard[r+1][c+1].getTeam())){
                                 return true;
                             }
                         }
                         else if(curBoard[r][c].getTeam() == 2){
-                            if((behindTL && topLeft && capV != curBoard[r-1][c-1].getVisual())||(behindTR && topRight && capV != curBoard[r-1][c+1].getVisual())){
+                            if((behindTL && topLeft && capT != curBoard[r-1][c-1].getTeam())||(behindTR && topRight && capT != curBoard[r-1][c+1].getTeam())){
                                 return true;
                             }
                         }
