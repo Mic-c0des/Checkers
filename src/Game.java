@@ -50,7 +50,7 @@ public class Game {
 
         boardHistory.push(curB.newCopy());
 
-        boolean wantToCap = true;
+        //boolean wantToCap = true;
 
         while(gameGo){
             int newR;
@@ -65,59 +65,7 @@ public class Game {
             }
 
             try{
-                if(curB.canCap() && wantToCap){
-                    println("please type capture if you would like to capture otherwise type anything else");
-                    String input = in.nextLine();
-                    if(input.toLowerCase().equals("capture")){
-                        int captorRow;
-                        int captorCol;
 
-                        println("what row is your captor");
-                        captorRow = in.nextInt() - 1;
-                        if( captorRow>7 || captorRow<0){
-                            throw new InputMismatchException();
-                        }
-                        println("what column");
-                        captorCol = in.nextInt() - 1;
-                        if( captorCol>7 || captorCol<0){
-                            throw new InputMismatchException();
-                        }
-                        //find the captive or ask if there are multiple (do this with canCap or a new method (public int captives)
-                        //remove the captive
-                        //call capture
-
-                        //TODO find a way for the game to figure out where the captive is and set these vars to that
-                        println("captive row");
-                        int captiveRow = in.nextInt()-1;
-                        println("captive column");
-                        int captiveCol = in.nextInt()-1;
-                        //TODO
-
-                        in.nextLine();
-                        curB.capture(curB.getPiece(captorRow, captorCol), curB.getPiece(captiveRow, captiveCol));
-                        curB.printBoard();
-
-                        println("Type YES to confirm NO to cancel");
-                        String yn = in.nextLine();
-                        if(yn.toLowerCase().equals("no")){
-                            curB = boardHistory.peek().newCopy();
-                            curB.printBoard();
-                        }
-                        else if (yn.toLowerCase().equals("yes")){
-                            boardHistory.push(curB.newCopy());
-                            whoTurn.add(whoTurn.remove());
-                        }
-                        else{
-                            curB = boardHistory.peek().newCopy();
-                            curB.printBoard();
-                            throw new InputMismatchException();
-                        }
-                    }
-                    else {
-                        wantToCap = false;
-                    }
-                }
-                else {
                     println("What row");
                     int r = in.nextInt()-1;
                     if( r>7 || r<0){
@@ -152,6 +100,57 @@ public class Game {
 
                     curB.getPiece(r,c).setVisual('@');
                     curB.printBoard();
+
+                if(curB.canCap(r,c)){
+                    println("please type 'capture' if you would like to capture otherwise type anything else");
+                    String input = in.nextLine();
+                    if(input.toLowerCase().equals("capture")){
+
+
+                        println("what row is your captor");
+                        r = in.nextInt() - 1;
+                        if( r>7 || r<0){
+                            throw new InputMismatchException();
+                        }
+                        println("what column");
+                        c = in.nextInt() - 1;
+                        if( c>7 || c<0){
+                            throw new InputMismatchException();
+                        }
+                        //find the captive or ask if there are multiple (do this with canCap or a new method (public int captives)
+                        //remove the captive
+                        //call capture
+
+                        //TODO find a way for the game to figure out where the captive is and set these vars to that
+                        println("captive row");
+                        int captiveRow = in.nextInt()-1;
+                        println("captive column");
+                        int captiveCol = in.nextInt()-1;
+                        //TODO
+
+                        in.nextLine();
+                        curB.capture(curB.getPiece(r, c), curB.getPiece(captiveRow, captiveCol));
+                        curB.printBoard();
+
+                        println("Type YES to confirm NO to cancel");
+                        String yn = in.nextLine();
+                        if(yn.toLowerCase().equals("no")){
+                            curB = boardHistory.peek().newCopy();
+                            curB.printBoard();
+                        }
+                        else if (yn.toLowerCase().equals("yes")){
+                            boardHistory.push(curB.newCopy());
+                            whoTurn.add(whoTurn.remove());
+                        }
+                        else{
+                            curB = boardHistory.peek().newCopy();
+                            curB.printBoard();
+                            throw new InputMismatchException();
+                        }
+                    }
+                }
+
+
                     //Determine if piece is going left or right
                     if(c == 7){
                         newC = c - 1;
@@ -197,8 +196,8 @@ public class Game {
                         curB.printBoard();
                         throw new InputMismatchException();
                     }
-                    wantToCap = true;
-                }
+
+
 
 
             } catch (InputMismatchException e){

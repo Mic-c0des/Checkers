@@ -154,44 +154,88 @@ public class Board {
         }
     }
 
-    public boolean canCap(){
-        for(int r=0; r<SIZE; r++){
-            for(int c=0; c<SIZE; c++){
-                try{
-                    if(isOccupied(r,c)){
 
-                        int capT = curBoard[r][c].getTeam();
-                        boolean topLeft = isOccupied(r-1,c-1);
-                        boolean behindTL = !isOccupied(r-2,c-2);
-                        boolean topRight = isOccupied(r-1,c+1);
-                        boolean behindTR = !isOccupied(r-2,c+2);
-                        boolean bottomLeft = isOccupied(r+1,c-1);
-                        boolean behindBL = !isOccupied(r+2,c-2);
-                        boolean bottomRight = isOccupied(r+1,c+1);
-                        boolean behindBR = !isOccupied(r+2,c+2);
+    public boolean canCap(int r,int c){
+        // finds all of the passable captures around a given piece. then checks which ones are occupied then checks if there is a space behind it to jump to
 
-                        if(curBoard[r][c] instanceof King){
-                            if((behindTL && topLeft && capT != curBoard[r-1][c-1].getTeam())||(behindTR && topRight && capT != curBoard[r-1][c+1].getTeam())||(behindBL && bottomLeft && capT != curBoard[r+1][c-1].getTeam())||(behindBR && bottomRight && capT != curBoard[r+1][c+1].getTeam())){
-                                return true;
-                            }
-                        }
-                        else if(curBoard[r][c].getTeam() == 1){
+        int capT = curBoard[r][c].getTeam();
+        boolean topLeft = false;
+        boolean behindTL = false;
+        boolean topRight = false;
+        boolean behindTR = false;
+        boolean bottomLeft = false;
+        boolean behindBL = false;
+        boolean bottomRight = false;
+        boolean behindBR = false;
+
+
+        try {
+            topLeft = isOccupied(r - 1, c - 1);
+        } catch (ArrayIndexOutOfBoundsException e){
+        }
+        try {
+            behindTL = !isOccupied(r - 2, c - 2);
+        } catch (ArrayIndexOutOfBoundsException e){
+        }
+        try {
+            topRight = isOccupied(r - 1, c + 1);
+        } catch (ArrayIndexOutOfBoundsException e){
+        }
+        try {
+            behindTR = !isOccupied(r - 2, c + 2);
+        } catch (ArrayIndexOutOfBoundsException e){
+        }
+        try {
+            bottomLeft = isOccupied(r + 1, c - 1);
+        } catch (ArrayIndexOutOfBoundsException e){
+        }
+        try {
+            behindBL = !isOccupied(r + 2, c - 2);
+        } catch (ArrayIndexOutOfBoundsException e){
+        }
+        try {
+            bottomRight = isOccupied(r + 1, c + 1);
+        } catch (ArrayIndexOutOfBoundsException e){
+        }
+        try {
+            behindBR = !isOccupied(r + 2, c + 2);
+        } catch (ArrayIndexOutOfBoundsException e){
+        }
+
+
+
+
+        try {
+            if (curBoard[r][c] instanceof King) {
+                if ((behindTL && topLeft && capT != curBoard[r - 1][c - 1].getTeam()) || (behindTR && topRight && capT != curBoard[r - 1][c + 1].getTeam()) || (behindBL && bottomLeft && capT != curBoard[r + 1][c - 1].getTeam()) || (behindBR && bottomRight && capT != curBoard[r + 1][c + 1].getTeam())) {
+                    return true;
+                }
+            }
+        } catch (ArrayIndexOutOfBoundsException e){
+
+        }
+        try {
+
+            if(curBoard[r][c].getTeam() == 1){
                             if((behindBL && bottomLeft && capT != curBoard[r+1][c-1].getTeam())||(behindBR && bottomRight && capT != curBoard[r+1][c+1].getTeam())){
                                 return true;
                             }
                         }
-                        else if(curBoard[r][c].getTeam() == 2){
+
+        } catch (ArrayIndexOutOfBoundsException e){
+
+        }
+        try {
+            if(curBoard[r][c].getTeam() == 2){
                             if((behindTL && topLeft && capT != curBoard[r-1][c-1].getTeam())||(behindTR && topRight && capT != curBoard[r-1][c+1].getTeam())){
                                 return true;
                             }
                         }
-                    }
-                } catch (ArrayIndexOutOfBoundsException e){
-                    continue;
-                }
-            }
+        } catch (ArrayIndexOutOfBoundsException e){
+
         }
-        return false;
+
+            return false;
     }
 
     public void capture(Piece captor, Piece captive){
