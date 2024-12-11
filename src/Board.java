@@ -247,6 +247,24 @@ public class Board {
         return new Board(this);
     }
 
+    public void switchType(){
+        for(Piece p1 : p1Pieces){
+            if(p1.getRow() == 7){
+                King pK = (King) p1;
+                p1Pieces.remove(p1);
+                p1Pieces.add(pK);
+            }
+        }
+
+        for(Piece p2 : p2Pieces){
+            if(p2.getRow() == 0){
+                King pK = (King) p2;
+                p1Pieces.remove(p2);
+                p1Pieces.add(pK);
+            }
+        }
+    }
+
     /**
      * @return True and will end gameLoop if one of the teams is out of pieces
      */

@@ -49,6 +49,9 @@ public class Game {
         p2Name = in.nextLine();
 
         boardHistory.push(curB.newCopy());
+
+        boolean wantToCap = true;
+
         while(gameGo){
             int newR;
             int newC;
@@ -62,7 +65,7 @@ public class Game {
             }
 
             try{
-                if(curB.canCap()){
+                if(curB.canCap() && wantToCap){
                     println("please type capture if you would like to capture otherwise type anything else");
                     String input = in.nextLine();
                     if(input.toLowerCase().equals("capture")){
@@ -109,6 +112,9 @@ public class Game {
                             curB.printBoard();
                             throw new InputMismatchException();
                         }
+                    }
+                    else {
+                        wantToCap = false;
                     }
                 }
                 else {
@@ -191,6 +197,7 @@ public class Game {
                         curB.printBoard();
                         throw new InputMismatchException();
                     }
+                    wantToCap = true;
                 }
 
 
@@ -201,6 +208,8 @@ public class Game {
             } catch (IllegalArgumentException e){
                 println("This piece has no valid places to move to");
             }
+
+            curB.switchType();
             if(curB.gameOver()){
                 gameGo = false;
             }
