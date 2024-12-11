@@ -155,8 +155,13 @@ public class Board {
     }
 
 
-    public boolean canCap(int r,int c){
+
+
+    public boolean[] canCap(int r,int c){
         // finds all of the passable captures around a given piece. then checks which ones are occupied then checks if there is a space behind it to jump to
+
+        // 0 top left , 1 top right , 2 bottom left , 3 bottom right
+        boolean[] aposcap = new boolean[4];
 
         int capT = curBoard[r][c].getTeam();
         boolean topLeft = false;
@@ -207,8 +212,17 @@ public class Board {
 
         try {
             if (curBoard[r][c] instanceof King) {
-                if ((behindTL && topLeft && capT != curBoard[r - 1][c - 1].getTeam()) || (behindTR && topRight && capT != curBoard[r - 1][c + 1].getTeam()) || (behindBL && bottomLeft && capT != curBoard[r + 1][c - 1].getTeam()) || (behindBR && bottomRight && capT != curBoard[r + 1][c + 1].getTeam())) {
-                    return true;
+                if ((behindTL && topLeft && capT != curBoard[r - 1][c - 1].getTeam())) {
+                    aposcap[0] = true; // top left
+                }
+                if ((behindTR && topRight && capT != curBoard[r - 1][c + 1].getTeam())) {
+                    aposcap[1] = true; // top right
+                }
+                if ((behindBL && bottomLeft && capT != curBoard[r + 1][c - 1].getTeam())) {
+                    aposcap[2] = true; // bottom left
+                }
+                if ((behindBR && bottomRight && capT != curBoard[r + 1][c + 1].getTeam())) {
+                    aposcap[3] = true; // bottom right
                 }
             }
         } catch (ArrayIndexOutOfBoundsException e){
@@ -217,9 +231,20 @@ public class Board {
         try {
 
             if(curBoard[r][c].getTeam() == 1){
+                /*
                             if((behindBL && bottomLeft && capT != curBoard[r+1][c-1].getTeam())||(behindBR && bottomRight && capT != curBoard[r+1][c+1].getTeam())){
                                 return true;
                             }
+
+                 */
+
+                if ((behindBL && bottomLeft && capT != curBoard[r + 1][c - 1].getTeam())) {
+                    aposcap[2] = true; // bottom left
+                }
+                if ((behindBR && bottomRight && capT != curBoard[r + 1][c + 1].getTeam())) {
+                    aposcap[3] = true; // bottom right
+                }
+
                         }
 
         } catch (ArrayIndexOutOfBoundsException e){
@@ -227,23 +252,67 @@ public class Board {
         }
         try {
             if(curBoard[r][c].getTeam() == 2){
+                /*
                             if((behindTL && topLeft && capT != curBoard[r-1][c-1].getTeam())||(behindTR && topRight && capT != curBoard[r-1][c+1].getTeam())){
                                 return true;
                             }
+
+                 */
+                if ((behindTL && topLeft && capT != curBoard[r - 1][c - 1].getTeam())) {
+                    aposcap[0] = true; // top left
+                }
+                if ((behindTR && topRight && capT != curBoard[r - 1][c + 1].getTeam())) {
+                    aposcap[1] = true; // top right
+                }
                         }
         } catch (ArrayIndexOutOfBoundsException e){
 
         }
 
-            return false;
+            return aposcap;
     }
 
-    public void capture(Piece captor, Piece captive){
+    public void capture(Piece captor, Piece captive, int spottojump){
 
+        int capR = captor.getRow();
         int capC = captor.getCol();
         int captiveR = captive.getRow();
         int captiveC = captive.getCol();
 
+        if (captor.getTeam() != captive.getTeam()) {
+            if (spottojump == 0) {
+                p2Pieces.remove(captive);
+                curBoard[captiveR][captiveC] = null;
+                play(captor, captiveR - 1, captiveC - 1);
+            } else if (spottojump == 1) {
+                p2Pieces.remove(captive);
+                curBoard[captiveR][captiveC] = null;
+                play(captor, captiveR - 1, captiveC + 1);
+            } else if (spottojump== 2) {
+                p2Pieces.remove(captive);
+                curBoard[captiveR][captiveC] = null;
+                play(captor, captiveR + 1, captiveC - 1);
+            } else if (spottojump== 3) {
+                p2Pieces.remove(captive);
+                curBoard[captiveR][captiveC] = null;
+                play(captor, captiveR + 1, captiveC + 1);
+            }
+
+            /* not working
+            if (captor.getTeam() == 0) {
+                captor.setVisual('x');
+            } else {
+                captor.setVisual('o');
+            }
+
+             */
+
+        }
+
+
+
+
+        /*
         if (captor.getTeam() != captive.getTeam()) {
             if(captor.getVisual() == 'x'){
                 if(captiveC > capC){
@@ -273,6 +342,8 @@ public class Board {
         } else {
             throw new InputMismatchException();
         }
+
+         */
     }
 
     /**

@@ -30,6 +30,13 @@ public class Game {
         whoTurn.add(2);
     }
 
+    public boolean checkbooleanarrayforone(boolean[] tfa) {
+        for (int i = 0 ; i < tfa.length ; i++) {
+            if(tfa[i]) return true;
+        }
+        return false;
+    }
+
     /**
      * gameLoop that will run for the entire duration of the game and will
      * end when a player loses or if a player forfeits
@@ -101,19 +108,62 @@ public class Game {
                     curB.getPiece(r,c).setVisual('@');
                     curB.printBoard();
 
-                if(curB.canCap(r,c)){
+                    boolean didijustcapondaboard = false;
+                    boolean[] capmap = curB.canCap(r,c);
+
+                if(checkbooleanarrayforone(capmap)){
                     println("please type 'capture' if you would like to capture otherwise type anything else");
                     String input = in.nextLine();
                     if(input.toLowerCase().equals("capture")){
 
+                        System.out.println("// 0 top left , 1 top right , 2 bottom left , 3 bottom right");
+                        if (capmap[0]) {
+                            System.out.println("top left can use");
 
-                        println("what row is your captor");
-                        r = in.nextInt() - 1;
+                        }
+                        if (capmap[1]) {
+                            System.out.println("top right can use");
+
+                        }
+                        if (capmap[2]) {
+                            System.out.println("bottom left can use");
+
+                        }
+                        if (capmap[3]) {
+                            System.out.println("bottom left can use");
+
+                        }
+                        int num = in.nextInt();
+                        // 0 top left , 1 top right , 2 bottom left , 3 bottom right
+
+                        int captiveRow = 0;
+                        int captiveCol = 0;
+
+                        if (capmap[0] && num == 0) {
+                            captiveRow = r - 1;
+                            captiveCol = c - 1;
+                        } else if (capmap[1] && num == 1) {
+                            captiveRow = r - 1;
+                            captiveCol = c + 1;
+                        } else if (capmap[2] && num == 2) {
+                            captiveRow = r + 1;
+                            captiveCol = c - 1;
+                        } else if (capmap[3] && num == 3) {
+                            captiveRow = r + 1;
+                            captiveCol = c + 1;
+                        }
+
+
+                        /*
+
+
+                        println("what row is your captor"+r);
+                        //r = in.nextInt() - 1;
                         if( r>7 || r<0){
                             throw new InputMismatchException();
                         }
-                        println("what column");
-                        c = in.nextInt() - 1;
+                        println("what column"+c);
+                        //c = in.nextInt() - 1;
                         if( c>7 || c<0){
                             throw new InputMismatchException();
                         }
@@ -128,8 +178,20 @@ public class Game {
                         int captiveCol = in.nextInt()-1;
                         //TODO
 
-                        in.nextLine();
-                        curB.capture(curB.getPiece(r, c), curB.getPiece(captiveRow, captiveCol));
+                         */
+
+
+                        if (curB.getPiece(r, c).getTeam() == 1) {
+                            curB.getPiece(r, c).setVisual('x');
+                        } else {
+                            curB.getPiece(r, c).setVisual('o');
+                        }
+
+
+
+                        in.nextLine(); // what does this do?
+
+                        curB.capture(curB.getPiece(r, c), curB.getPiece(captiveRow, captiveCol), num);
                         curB.printBoard();
 
                         println("Type YES to confirm NO to cancel");
@@ -141,61 +203,66 @@ public class Game {
                         else if (yn.toLowerCase().equals("yes")){
                             boardHistory.push(curB.newCopy());
                             whoTurn.add(whoTurn.remove());
+                            didijustcapondaboard = true;
                         }
                         else{
                             curB = boardHistory.peek().newCopy();
                             curB.printBoard();
                             throw new InputMismatchException();
                         }
+
+
                     }
                 }
 
 
+                if (!didijustcapondaboard) {
+
+
                     //Determine if piece is going left or right
-                    if(c == 7){
+                    if (c == 7) {
                         newC = c - 1;
-                    } else if(c == 0){
+                    } else if (c == 0) {
                         newC = c + 1;
-                    } else{
+                    } else {
                         println("Left or right");
                         String LR = in.nextLine().toLowerCase();
-                        if(LR.equals("left")){
+                        if (LR.equals("left")) {
                             newC = c - 1;
-                        } else if(LR.equals("right")){
+                        } else if (LR.equals("right")) {
                             newC = c + 1;
                         } else {
                             throw new InputMismatchException();
                         }
                     }
 
-                    curB.play(curB.getPiece(r,c), newR, newC);
+                    curB.play(curB.getPiece(r, c), newR, newC);
                     curB.printBoard();
 
                     println("Type YES to confirm NO to cancel");
                     String yn = in.nextLine();
-                    if(yn.toLowerCase().equals("no")){
+                    if (yn.toLowerCase().equals("no")) {
                         curB = boardHistory.peek().newCopy();
                         curB.printBoard();
-                    }
-                    else if (yn.toLowerCase().equals("yes")){
-                        if(whoTurn.peek() == 1){
+                    } else if (yn.toLowerCase().equals("yes")) {
+                        if (whoTurn.peek() == 1) {
                             curB.getPiece(newR, newC).setVisual('x');
                             curB.getPiece(newR, newC).setRow(newR);
                             curB.getPiece(newR, newC).setCol(newC);
-                        }
-                        else{
+                        } else {
                             curB.getPiece(newR, newC).setVisual('o');
                             curB.getPiece(newR, newC).setRow(newR);
                             curB.getPiece(newR, newC).setCol(newC);
                         }
                         boardHistory.push(curB.newCopy());
                         whoTurn.add(whoTurn.remove());
-                    }
-                    else{
+                    } else {
                         curB = boardHistory.peek().newCopy();
                         curB.printBoard();
                         throw new InputMismatchException();
                     }
+
+                }
 
 
 
