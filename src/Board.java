@@ -319,22 +319,30 @@ public class Board {
      * Searches through the arraylist of pieces and converts any pawn on the opposite end of the board to a king
      */
     public void switchType(){
-        for(int i = 0; i < p1Pieces.size(); i++){
-            if(p1Pieces.get(i).getRow() == 7 && p1Pieces.get(i) instanceof Pawn){
-                King pK = new King(p1Pieces.get(i).getTeam(), p1Pieces.get(i).getRow(), p1Pieces.get(i).getCol(), 'X');
-                p1Pieces.add(pK);
-                curBoard[pK.getRow()][pK.getCol()] = pK;
-                p1Pieces.remove(p1Pieces.get(i));
+        ArrayList<Piece> newP1Pieces = new ArrayList<>();
+        ArrayList<Piece> newP2Pieces = new ArrayList<>();
+        for (int i = 0; i < p1Pieces.size(); i++) {
+            Piece piece = p1Pieces.get(i);
+            if (piece.getRow() == 7 && piece instanceof Pawn) {
+                King pK = new King(piece.getTeam(), piece.getRow(), piece.getCol(), 'X');
+                newP1Pieces.add(pK);
+                curBoard[piece.getRow()][piece.getCol()] = pK;
+            } else {
+                newP1Pieces.add(piece);
             }
         }
-        for(int i = 0; i < p2Pieces.size(); i++){
-            if(p2Pieces.get(i).getRow() == 0 && p2Pieces.get(i) instanceof Pawn){
-                King pK = new King(p2Pieces.get(i).getTeam(), p2Pieces.get(i).getRow(), p2Pieces.get(i).getCol(), 'O');
-                p1Pieces.add(pK);
-                curBoard[pK.getRow()][pK.getCol()] = pK;
-                p1Pieces.remove(p2Pieces.get(i));
+        p1Pieces = newP1Pieces;
+        for (int i = 0; i < p2Pieces.size(); i++) {
+            Piece piece = p2Pieces.get(i);
+            if (piece.getRow() == 0 && piece instanceof Pawn) {
+                King pK = new King(piece.getTeam(), piece.getRow(), piece.getCol(), 'O');
+                newP2Pieces.add(pK);
+                curBoard[piece.getRow()][piece.getCol()] = pK;
+            } else {
+                newP2Pieces.add(piece);
             }
         }
+        p2Pieces = newP2Pieces;
     }
 
 
