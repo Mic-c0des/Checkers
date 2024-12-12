@@ -322,18 +322,16 @@ public class Board {
         for(int i = 0; i < p1Pieces.size(); i++){
             if(p1Pieces.get(i).getRow() == 7 && p1Pieces.get(i) instanceof Pawn){
                 King pK = new King(p1Pieces.get(i).getTeam(), p1Pieces.get(i).getRow(), p1Pieces.get(i).getCol(), 'X');
-                p1Pieces.remove(p1Pieces.get(i));
                 p1Pieces.add(pK);
-                curBoard[pK.getRow()][pK.getCol()] = null;
+                p1Pieces.remove(p1Pieces.get(i));
                 curBoard[pK.getRow()][pK.getCol()] = pK;
             }
         }
         for(int i = 0; i < p2Pieces.size(); i++){
             if(p2Pieces.get(i).getRow() == 0 && p2Pieces.get(i) instanceof Pawn){
                 King pK = new King(p2Pieces.get(i).getTeam(), p2Pieces.get(i).getRow(), p2Pieces.get(i).getCol(), 'O');
-                p1Pieces.remove(p2Pieces.get(i));
                 p1Pieces.add(pK);
-                curBoard[pK.getRow()][pK.getCol()] = null;
+                p1Pieces.remove(p2Pieces.get(i));
                 curBoard[pK.getRow()][pK.getCol()] = pK;
             }
         }

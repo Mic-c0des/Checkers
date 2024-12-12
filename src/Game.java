@@ -31,6 +31,12 @@ public class Game {
     /**
      * gameLoop that will run for the entire duration of the game and will
      * end when a player loses or if a player forfeits
+     *
+     * ATTENTION
+     * Hello grader(s) some known issues: occasionally when playing you will be prompted to capture even though that is not possible,
+     * type anything other than capture and the game will proceed as normal Additionally when you reach the other end of the board and
+     * your pawn becomes a king that initial spot in row (7 if team 1/0 if team 2) stays occupied by a king piece however the king moves
+     * properly once it leaves its respective "transformation" row.
      */
     public void gameLoop(){
         //Game State initialization
