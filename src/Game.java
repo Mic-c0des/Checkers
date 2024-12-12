@@ -45,6 +45,7 @@ public class Game {
         println("Filling board");
         curB.fillBoard();
         boolean gameGo = true;
+        boolean wantCapture = true;
 
         //Intro and player name assignments
         println("Hello welcome to checkers\nPlease enter player 1 name");
@@ -53,8 +54,6 @@ public class Game {
         p2Name = in.nextLine();
 
         //boardHistory.push(curB.newCopy());
-
-        boolean wantCapture = true;
 
         while(gameGo){
             int newR;
@@ -71,13 +70,13 @@ public class Game {
             try{
                 int r;
                 int c;
-                println("What row");
+                println("What row (1-8 top-bottom)");
                 r = in.nextInt()-1;
 
                 if( r>7 || r<0){
                     throw new InputMismatchException();
                 }
-                println("What column");
+                println("What column (1-8 left-right)");
                 c = in.nextInt()-1;
                 if(c>7 || c<0){
                     throw new InputMismatchException();
@@ -89,12 +88,10 @@ public class Game {
                     String input = in.nextLine();
                     if(input.toLowerCase().equals("capture")){
 
-                        //TODO find a way for the game to figure out where the captive is and set these vars to that
-                        println("captive row");
+                        println("captive row (1-8 top-bottom)");
                         int captiveRow = in.nextInt()-1;
-                        println("captive column");
+                        println("captive column (1-8 left-right)");
                         int captiveCol = in.nextInt()-1;
-                        //TODO
 
                         in.nextLine();
                         curB.capture(curB.getPiece(r, c), curB.getPiece(captiveRow, captiveCol));
