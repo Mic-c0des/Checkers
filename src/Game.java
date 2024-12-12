@@ -6,7 +6,6 @@ import java.util.*;
 
 public class Game {
     Queue<Integer> whoTurn;
-    Stack<Board> boardHistory;
     String p1Name;
     String p2Name;
 
@@ -24,7 +23,6 @@ public class Game {
      * Constructs a Game object
      */
     public Game(){
-        boardHistory = new Stack<>();
         whoTurn = new LinkedList<>();
         whoTurn.add(1);
         whoTurn.add(2);
