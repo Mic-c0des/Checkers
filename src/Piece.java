@@ -28,6 +28,9 @@ public abstract class Piece {
         this.visual = visual;
     }
 
+    /**
+     * copy constructor for piece p
+     */
     public Piece(Piece p){
         this.team = p.getTeam();
         this.row = p.getRow();
@@ -43,17 +46,17 @@ public abstract class Piece {
     }
 
     /**
-     * @param t new team for this piece to join
-     */
-    public void setTeam(int t){
-        team = t;
-    }
-
-    /**
      * @returns row
      */
     public int getRow(){
         return row;
+    }
+
+    /**
+     * @returns what character represents this piece takes eg. X or O
+     */
+    public char getVisual(){
+        return visual;
     }
 
     /**
@@ -75,20 +78,6 @@ public abstract class Piece {
      */
     public void setCol(int c){
         col = c;
-    }
-
-    /**
-     * @returns what character represents this piece takes eg. X or O
-     */
-    public char getVisual(){
-        return visual;
-    }
-
-    /**
-     * @param c new character for this piece to take x,o for pawn X,O for kings
-     */
-    public void setVisual(char c){
-        visual = c;
     }
 
     /**

@@ -17,7 +17,7 @@ public class King extends Piece{
     }
 
     /**
-     * implement and override necessary methods form the class piece to work specifically for a king
+     * called to deep copy a pawn
      */
     @Override
     public King selfCopy(){

@@ -11,14 +11,15 @@ public class Pawn extends Piece{
         super(team,row, col, visual);
     }
 
+    /**
+     * @param other piece to be copied
+     */
     public Pawn(Pawn other){
         super(other);
     }
 
-    //MAKE getters and setters for row and col  in piece, pawn and king classes
-
     /**
-     * implement and override necessary methods form the class piece to work specifically for a pawn
+     * called to deep copy a pawn
      */
     @Override
     public Pawn selfCopy(){

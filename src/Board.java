@@ -4,6 +4,7 @@
  */
 import java.util.ArrayList;
 import java.util.InputMismatchException;
+import java.util.Scanner;
 
 public class Board {
     /**
@@ -23,33 +24,13 @@ public class Board {
     private ArrayList<Piece> p1Pieces;
     private ArrayList<Piece> p2Pieces;
 
+    /**
+     * ArrayList of each player's teams
+     */
     public Board(){
         p1Pieces = new ArrayList<>();
         p2Pieces = new ArrayList<>();
 
-    }
-
-    public Board(Board other){
-        this.p1Pieces = new ArrayList<>();
-        this.p2Pieces = new ArrayList<>();
-        for(Piece p1: other.p1Pieces){
-            this.p1Pieces.add(p1.selfCopy());
-        }
-        for(Piece p2: other.p2Pieces){
-            this.p2Pieces.add(p2.selfCopy());
-        }
-
-        this.curBoard = new Piece[SIZE][SIZE];
-        for(int r=0; r<SIZE; r++){
-            for(int c=0; c<SIZE; c++){
-                if(other.isOccupied(r,c)){
-                    this.curBoard[r][c] = other.curBoard[r][c].selfCopy();
-                }
-                else{
-                    this.curBoard[r][c] = null;
-                }
-            }
-        }
     }
 
     /**
@@ -139,92 +120,183 @@ public class Board {
      * @return piece at row, col
      */
     public Piece getPiece(int row, int col){
-        return curBoard[row][col];
+        try{
+            return curBoard[row][col];
+        } catch (ArrayIndexOutOfBoundsException e){
+            throw new InputMismatchException();
+        }
     }
 
+    /**
+     * @param p piece to be moved
+     * @param newRow row to be moved to
+     * @param newCol column to be moved to
+     */
     public void play(Piece p, int newRow, int newCol){
         Piece oldP = p.selfCopy();
         int oldR = oldP.getRow();
         int oldC = oldP.getCol();
         if(!isOccupied(newRow, newCol)){
             curBoard[oldR][oldC] = null;
-            curBoard[newRow][newCol] = p.selfCopy();
+            curBoard[newRow][newCol] = p;
+            p.setRow(newRow);
+            p.setCol(newCol);
         } else {
             throw new InputMismatchException();
         }
     }
 
-    public boolean canCap(){
-        for(int r=0; r<SIZE; r++){
-            for(int c=0; c<SIZE; c++){
+    /**
+     * @param r row of selected piece
+     * @param c column of selected piece
+     * @return true if the piece at row and column
+     */
+    public boolean canCap(int r,int c){
+        if(isOccupied(r,c)){
+            int capT = curBoard[r][c].getTeam();
+
+            boolean topLeft = false;
+            boolean behindTL = false;
+            boolean topRight = false;
+            boolean behindTR = false;
+            boolean bottomLeft = false;
+            boolean behindBL = false;
+            boolean bottomRight = false;
+            boolean behindBR = false;
+            try{
+                topLeft = isOccupied(r-1,c-1);
+            } catch (ArrayIndexOutOfBoundsException e){}
+            try{
+                behindTL = !isOccupied(r-2,c-2);
+            }catch (ArrayIndexOutOfBoundsException e){}
+            try{
+                topRight = isOccupied(r-1,c+1);
+            }catch (ArrayIndexOutOfBoundsException e){}
+            try{
+                behindTR = !isOccupied(r-2,c+2);
+            }catch (ArrayIndexOutOfBoundsException e){}
+            try{
+                bottomLeft = isOccupied(r+1,c-1);
+            }catch (ArrayIndexOutOfBoundsException e){}
+            try{
+                behindBL = !isOccupied(r+2,c-2);
+            }catch (ArrayIndexOutOfBoundsException e){}
+            try{
+                bottomRight = isOccupied(r+1,c+1);
+            }catch (ArrayIndexOutOfBoundsException e){}
+            try{
+                behindBR = !isOccupied(r+2,c+2);
+            }catch (ArrayIndexOutOfBoundsException e){}
+
+            if(curBoard[r][c] instanceof King){
                 try{
-                    if(isOccupied(r,c)){
-                        char capV = curBoard[r][c].getVisual();
-
-                        boolean topLeft = isOccupied(r-1,c-1);
-                        boolean behindTL = !isOccupied(r-2,c-2);
-                        boolean topRight = isOccupied(r-1,c+1);
-                        boolean behindTR = !isOccupied(r-2,c+2);
-                        boolean bottomLeft = isOccupied(r+1,c-1);
-                        boolean behindBL = !isOccupied(r+2,c-2);
-                        boolean bottomRight = isOccupied(r+1,c+1);
-                        boolean behindBR = !isOccupied(r+2,c+2);
-
-                        if(curBoard[r][c] instanceof King){
-                            if((behindTL && topLeft && capV != curBoard[r-1][c-1].getVisual())||(behindTR && topRight && capV != curBoard[r-1][c+1].getVisual())||(behindBL && bottomLeft && capV != curBoard[r+1][c-1].getVisual())||(behindBR && bottomRight && capV != curBoard[r+1][c+1].getVisual())){
-                                return true;
-                            }
-                        }
-                        else if(curBoard[r][c].getTeam() == 1){
-                            if((behindBL && bottomLeft && capV != curBoard[r+1][c-1].getVisual())||(behindBR && bottomRight && capV != curBoard[r+1][c+1].getVisual())){
-                                return true;
-                            }
-                        }
-                        else if(curBoard[r][c].getTeam() == 2){
-                            if((behindTL && topLeft && capV != curBoard[r-1][c-1].getVisual())||(behindTR && topRight && capV != curBoard[r-1][c+1].getVisual())){
-                                return true;
-                            }
-                        }
-                    }
-                } catch (ArrayIndexOutOfBoundsException e){
-                    continue;
+                    if((behindTL && topLeft && capT != curBoard[r-1][c-1].getTeam()))
+                        return true;
+                } catch (ArrayIndexOutOfBoundsException ignored){
+                }
+                try{
+                    if (behindTR && topRight && capT != curBoard[r-1][c+1].getTeam())
+                        return true;
+                } catch (ArrayIndexOutOfBoundsException ignored){
+                }
+                try{
+                    if (behindBL && bottomLeft && capT != curBoard[r+1][c-1].getTeam())
+                        return true;
+                } catch (ArrayIndexOutOfBoundsException ignored){
+                }
+                try{
+                    if (behindBR && bottomRight && capT != curBoard[r+1][c+1].getTeam())
+                        return true;
+                } catch (ArrayIndexOutOfBoundsException ignored){
                 }
             }
+            else if(curBoard[r][c].getTeam() == 1){
+                try{
+                    if (behindBL && bottomLeft && capT != curBoard[r+1][c-1].getTeam())
+                        return true;
+                } catch (ArrayIndexOutOfBoundsException ignored){}
+                try{
+                    if (behindBR && bottomRight && capT != curBoard[r+1][c+1].getTeam())
+                        return true;
+                } catch (ArrayIndexOutOfBoundsException ignored){}
+            }
+            else if(curBoard[r][c].getTeam() == 2){
+                try{
+                    if((behindTL && topLeft && capT != curBoard[r-1][c-1].getTeam()))
+                        return true;
+                } catch (ArrayIndexOutOfBoundsException ignored){
+                }
+                try{
+                    if (behindTR && topRight && capT != curBoard[r-1][c+1].getTeam())
+                        return true;
+                } catch (ArrayIndexOutOfBoundsException ignored){}
+            }
         }
-        return false;
-    }
+    return false;
+}
 
+    /**
+     * @param captor piece capturing
+     * @param captive piece to be captured
+     *                attempts to move captor over captive
+     *                and remove captive from its teams list
+     *                of pieces
+     */
     public void capture(Piece captor, Piece captive){
-
+        Scanner in = new Scanner(System.in);
+        String UD;
         int capC = captor.getCol();
         int captiveR = captive.getRow();
         int captiveC = captive.getCol();
 
+        int moveToR;
+        int moveToC;
+
         if (captor.getTeam() != captive.getTeam()) {
-            if(captor.getVisual() == 'x'){
-                if(captiveC > capC){
-                    p2Pieces.remove(captive);
-                    curBoard[captiveR][captiveC] = null;
-                    play(captor, captiveR + 1, captiveC + 1);
+            if(captor instanceof King){
+                System.out.println("Up or down");
+                UD = in.nextLine();
+                if(captor.getRow() == 7){
+                    moveToR = captiveR - 1;
+                }
+                else if(captor.getRow() == 0){
+                    moveToR = captiveR + 1;
+                }
+                else if(UD.equals("up")){
+                    moveToR = captiveR - 1;
+                }
+                else if(UD.equals("down")){
+                    moveToR = captiveR + 1;
                 }
                 else{
-                    p2Pieces.remove(captive);
-                    curBoard[captiveR][captiveC] = null;
-                    play(captor, captiveR + 1, captiveC - 1);
+                    throw new IllegalArgumentException();
                 }
             }
-            else if(captor.getVisual() == 'o'){
-                if(captiveC > capC){
-                    p1Pieces.remove(captive);
-                    curBoard[captiveR][captiveC] = null;
-                    play(captor, captiveR + 1, captiveC + 1);
-                }
-                else{
-                    p1Pieces.remove(captive);
-                    curBoard[captiveR][captiveC] = null;
-                    play(captor, captiveR + 1, captiveC - 1);
-                }
+            else if(captor.getTeam() == 1){
+                moveToR = captiveR + 1;
             }
+            else if(captor.getTeam() == 2){
+                moveToR = captiveR - 1;
+            }
+            else{
+                throw new InputMismatchException();
+            }
+
+            if(capC > captiveC){
+                moveToC = captiveC - 1;
+            }
+            else{
+                moveToC = captiveC + 1;
+            }
+            play(captor, moveToR, moveToC);
+
+            if(captor.getTeam() == 1){
+                p2Pieces.remove(captive);
+            }
+            else if(captor.getTeam() == 2){
+                p1Pieces.remove(captive);
+            }
+            curBoard[captiveR][captiveC] = null;
 
         } else {
             throw new InputMismatchException();
@@ -243,9 +315,30 @@ public class Board {
         return curBoard[r][c] != null;
     }
 
-    public Board newCopy(){
-        return new Board(this);
+    /**
+     * Searches through the arraylist of pieces and converts any pawn on the opposite end of the board to a king
+     */
+    public void switchType(){
+        for(int i = 0; i < p1Pieces.size(); i++){
+            if(p1Pieces.get(i).getRow() == 7 && p1Pieces.get(i) instanceof Pawn){
+                King pK = new King(p1Pieces.get(i).getTeam(), p1Pieces.get(i).getRow(), p1Pieces.get(i).getCol(), 'X');
+                p1Pieces.remove(p1Pieces.get(i));
+                p1Pieces.add(pK);
+                curBoard[pK.getRow()][pK.getCol()] = null;
+                curBoard[pK.getRow()][pK.getCol()] = pK;
+            }
+        }
+        for(int i = 0; i < p2Pieces.size(); i++){
+            if(p2Pieces.get(i).getRow() == 0 && p2Pieces.get(i) instanceof Pawn){
+                King pK = new King(p2Pieces.get(i).getTeam(), p2Pieces.get(i).getRow(), p2Pieces.get(i).getCol(), 'O');
+                p1Pieces.remove(p2Pieces.get(i));
+                p1Pieces.add(pK);
+                curBoard[pK.getRow()][pK.getCol()] = null;
+                curBoard[pK.getRow()][pK.getCol()] = pK;
+            }
+        }
     }
+
 
     /**
      * @return True and will end gameLoop if one of the teams is out of pieces

@@ -48,11 +48,14 @@ public class Game {
         println("Please enter player 2 name");
         p2Name = in.nextLine();
 
-        boardHistory.push(curB.newCopy());
+        //boardHistory.push(curB.newCopy());
+
+        boolean wantCapture = true;
+
         while(gameGo){
             int newR;
             int newC;
-            boardHistory.peek().printBoard();
+            curB.printBoard();
 
             if(whoTurn.peek()%2 == 0){
                 println(p2Name + "'s turn");
@@ -62,26 +65,25 @@ public class Game {
             }
 
             try{
-                if(curB.canCap()){
+                int r;
+                int c;
+                println("What row");
+                r = in.nextInt()-1;
+
+                if( r>7 || r<0){
+                    throw new InputMismatchException();
+                }
+                println("What column");
+                c = in.nextInt()-1;
+                if(c>7 || c<0){
+                    throw new InputMismatchException();
+                }
+                in.nextLine();
+
+                if(curB.canCap(r,c) && wantCapture){
                     println("please type capture if you would like to capture otherwise type anything else");
                     String input = in.nextLine();
                     if(input.toLowerCase().equals("capture")){
-                        int captorRow;
-                        int captorCol;
-
-                        println("what row is your captor");
-                        captorRow = in.nextInt() - 1;
-                        if( captorRow>7 || captorRow<0){
-                            throw new InputMismatchException();
-                        }
-                        println("what column");
-                        captorCol = in.nextInt() - 1;
-                        if( captorCol>7 || captorCol<0){
-                            throw new InputMismatchException();
-                        }
-                        //find the captive or ask if there are multiple (do this with canCap or a new method (public int captives)
-                        //remove the captive
-                        //call capture
 
                         //TODO find a way for the game to figure out where the captive is and set these vars to that
                         println("captive row");
@@ -91,49 +93,35 @@ public class Game {
                         //TODO
 
                         in.nextLine();
-                        curB.capture(curB.getPiece(captorRow, captorCol), curB.getPiece(captiveRow, captiveCol));
+                        curB.capture(curB.getPiece(r, c), curB.getPiece(captiveRow, captiveCol));
                         curB.printBoard();
-
-                        println("Type YES to confirm NO to cancel");
-                        String yn = in.nextLine();
-                        if(yn.toLowerCase().equals("no")){
-                            curB = boardHistory.peek().newCopy();
-                            curB.printBoard();
-                        }
-                        else if (yn.toLowerCase().equals("yes")){
-                            boardHistory.push(curB.newCopy());
-                            whoTurn.add(whoTurn.remove());
-                        }
-                        else{
-                            curB = boardHistory.peek().newCopy();
-                            curB.printBoard();
-                            throw new InputMismatchException();
-                        }
+                        whoTurn.add(whoTurn.remove());
+                    }
+                    else{
+                        wantCapture = false;
+                        continue;
                     }
                 }
-                else {
-                    println("What row");
-                    int r = in.nextInt()-1;
-                    if( r>7 || r<0){
-                        throw new InputMismatchException();
-                    }
-                    println("What column");
-                    int c = in.nextInt()-1;
-                    if(c>7 || c<0){
-                        throw new InputMismatchException();
-                    }
-                    in.nextLine();
+                else if(!curB.canCap(r,c) || !wantCapture){
 
                     //Determine if piece is going up or down
                     if(curB.getPiece(r,c) instanceof King){
                         println("Up or down");
                         String UD = in.nextLine().toLowerCase();
-                        if(UD.equals("up")){
+                        if(curB.getPiece(r,c).getRow() == 7){
                             newR = r - 1;
-                        } else if(UD.equals("down")){
+                        }
+                        else if(curB.getPiece(r,c).getRow() == 0){
                             newR = r + 1;
-                        } else {
-                            throw new InputMismatchException();
+                        }
+                        else if(UD.equals("up")){
+                            newR = r - 1;
+                        }
+                        else if(UD.equals("down")){
+                            newR = r + 1;
+                        }
+                        else{
+                            throw new IllegalArgumentException();
                         }
                     } else if(whoTurn.peek() == 1 && curB.getPiece(r,c).getTeam() == 1){
                         newR = r + 1;
@@ -144,8 +132,6 @@ public class Game {
                         throw new InputMismatchException();
                     }
 
-                    curB.getPiece(r,c).setVisual('@');
-                    curB.printBoard();
                     //Determine if piece is going left or right
                     if(c == 7){
                         newC = c - 1;
@@ -159,52 +145,30 @@ public class Game {
                         } else if(LR.equals("right")){
                             newC = c + 1;
                         } else {
-                            throw new InputMismatchException();
+                            throw new IllegalArgumentException();
                         }
                     }
 
                     curB.play(curB.getPiece(r,c), newR, newC);
                     curB.printBoard();
-
-                    println("Type YES to confirm NO to cancel");
-                    String yn = in.nextLine();
-                    if(yn.toLowerCase().equals("no")){
-                        curB = boardHistory.peek().newCopy();
-                        curB.printBoard();
-                    }
-                    else if (yn.toLowerCase().equals("yes")){
-                        if(whoTurn.peek() == 1){
-                            curB.getPiece(newR, newC).setVisual('x');
-                            curB.getPiece(newR, newC).setRow(newR);
-                            curB.getPiece(newR, newC).setCol(newC);
-                        }
-                        else{
-                            curB.getPiece(newR, newC).setVisual('o');
-                            curB.getPiece(newR, newC).setRow(newR);
-                            curB.getPiece(newR, newC).setCol(newC);
-                        }
-                        boardHistory.push(curB.newCopy());
-                        whoTurn.add(whoTurn.remove());
-                    }
-                    else{
-                        curB = boardHistory.peek().newCopy();
-                        curB.printBoard();
-                        throw new InputMismatchException();
-                    }
+                    whoTurn.add(whoTurn.remove());
                 }
 
+                curB.switchType();
 
             } catch (InputMismatchException e){
                 println("Illegal input detected try again");
+                in.nextLine();
+
             } catch (NullPointerException e){
                 println("Empty space try again");
             } catch (IllegalArgumentException e){
-                println("This piece has no valid places to move to");
+                println("Illegal input detected");
             }
             if(curB.gameOver()){
                 gameGo = false;
             }
-
+            wantCapture = true;
         }
 
         String player;
@@ -217,6 +181,11 @@ public class Game {
         println("Congratulations " + player + " you win!");
     }
 
+    /**
+     * @param s to be printed
+     *          shortcut for
+     *          System.out.println();
+     */
     public void println(Object s){
         System.out.println(s);
     }
